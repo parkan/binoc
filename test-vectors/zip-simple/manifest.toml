@@ -1,0 +1,8 @@
+[vector]
+name = "zip-simple"
+description = "Zipped files with changes inside"
+tags = ["zip", "archive"]
+
+[expected]
+root_kind = "modify"
+# has_tags should include content changes

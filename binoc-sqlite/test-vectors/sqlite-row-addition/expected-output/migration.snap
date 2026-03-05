@@ -1,0 +1,57 @@
+---
+source: binoc-stdlib/src/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "modify",
+        "item_type": "sqlite_database",
+        "path": "data.sqlite",
+        "children": [
+          {
+            "kind": "modify",
+            "item_type": "sqlite_table",
+            "path": "data.sqlite/users",
+            "summary": "1 row added (1 → 2 rows)",
+            "tags": [
+              "binoc-sqlite.row-addition",
+              "binoc.row-addition"
+            ],
+            "details": {
+              "columns_left": [
+                "id",
+                "name"
+              ],
+              "columns_right": [
+                "id",
+                "name"
+              ],
+              "rows_added": 1,
+              "rows_left": 1,
+              "rows_right": 2
+            }
+          }
+        ],
+        "details": {
+          "hash_left": "5642b90b69b50b45075fabf9f4b990c42ac7c020cf84db343cdfa4f2aad485d2",
+          "hash_right": "21c6dfd96f7aca55c266d5af918149e63f806433065750b55114b6faad7e9b7b",
+          "tables_left": [
+            "users"
+          ],
+          "tables_right": [
+            "users"
+          ]
+        },
+        "comparator": "binoc-sqlite.sqlite"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

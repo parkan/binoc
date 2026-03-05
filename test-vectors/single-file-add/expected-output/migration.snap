@@ -1,0 +1,30 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "add",
+        "item_type": "text",
+        "path": "new_file.txt",
+        "summary": "New file (1 line)",
+        "tags": [
+          "binoc.content-changed"
+        ],
+        "details": {
+          "hash_right": "d90aa2033e3031da3f6d22212832ed1841cd13fd6746556dd48ff7642eb4a46c",
+          "lines": 1
+        },
+        "comparator": "binoc.text"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

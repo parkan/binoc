@@ -1,0 +1,98 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "modify",
+        "item_type": "directory",
+        "path": "data",
+        "children": [
+          {
+            "kind": "add",
+            "item_type": "tabular",
+            "path": "data/extra.csv",
+            "summary": "New table (2 columns, 1 rows)",
+            "tags": [
+              "binoc.content-changed"
+            ],
+            "details": {
+              "columns": [
+                "id",
+                "value"
+              ],
+              "hash_right": "6d8ed3ee1f5797232a5a3522173a8b531d34ee80c51b62b5f00cd677fa3baefc",
+              "rows": 1
+            },
+            "comparator": "binoc.csv"
+          },
+          {
+            "kind": "modify",
+            "item_type": "tabular",
+            "path": "data/records.csv",
+            "summary": "1 row added",
+            "tags": [
+              "binoc.row-addition"
+            ],
+            "details": {
+              "cells_changed": 0,
+              "columns_added": [],
+              "columns_left": [
+                "id",
+                "name"
+              ],
+              "columns_removed": [],
+              "columns_right": [
+                "id",
+                "name"
+              ],
+              "hash_left": "cdd7d4de8f6297472ddf5dcf982eaec86337f445392c33635ef0d8e562817a7f",
+              "hash_right": "cc53a354625fafc744e96856a6f732822bd6920f3852b5b565270e684783aebe",
+              "rows_added": 1,
+              "rows_left": 2,
+              "rows_removed": 0,
+              "rows_right": 3
+            },
+            "comparator": "binoc.csv"
+          }
+        ],
+        "comparator": "binoc.directory"
+      },
+      {
+        "kind": "modify",
+        "item_type": "directory",
+        "path": "docs",
+        "children": [
+          {
+            "kind": "modify",
+            "item_type": "text",
+            "path": "docs/readme.txt",
+            "summary": "2 lines added, 1 removed",
+            "tags": [
+              "binoc.content-changed",
+              "binoc.lines-added",
+              "binoc.lines-removed"
+            ],
+            "details": {
+              "hash_left": "2b04f2d36a6a3ddd736f6b2440f717c1177bf3f574d73322e324370dc255d881",
+              "hash_right": "55d79df89c7cb62b646eaa1c469975562e6fbb48fd572252d4480883a667a040",
+              "lines_added": 2,
+              "lines_removed": 1,
+              "lines_unchanged": 0
+            },
+            "comparator": "binoc.text"
+          }
+        ],
+        "comparator": "binoc.directory"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

@@ -1,0 +1,2 @@
+This file exists in both snapshots unchanged.
+A copy of it appears at a new path in snapshot B.

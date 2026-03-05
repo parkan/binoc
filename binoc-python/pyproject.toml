@@ -1,0 +1,21 @@
+[project]
+name = "binoc"
+version = "0.1.0"
+description = "The missing changelog for datasets"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[project.scripts]
+binoc = "binoc.__main__:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-datadir>=1.5", "maturin>=1.7,<2.0"]
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "python"
+module-name = "binoc._binoc"
+features = ["pyo3/extension-module"]

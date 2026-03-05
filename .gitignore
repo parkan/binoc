@@ -1,1 +1,6 @@
 /target
+*.swp
+*.swo
+*.pyc
+*.so
+/binoc-python/python/binoc/lib_binoc.dylib.dSYM

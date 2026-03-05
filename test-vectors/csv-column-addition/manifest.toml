@@ -1,0 +1,8 @@
+[vector]
+name = "csv-column-addition"
+description = "New column added"
+tags = ["csv", "column-addition", "schema"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.column-addition", "binoc.schema-change"]

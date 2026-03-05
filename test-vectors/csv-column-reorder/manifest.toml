@@ -1,0 +1,14 @@
+[vector]
+name = "csv-column-reorder"
+description = "Columns shuffled, content identical"
+tags = ["csv", "column-reorder", "ministerial"]
+
+[config]
+comparators = ["binoc.directory", "binoc.csv"]
+transformers = ["binoc.column_reorder_detector"]
+
+[expected]
+root_kind = "modify"
+child_count = 1
+has_tags = ["binoc.column-reorder"]
+significance = "ministerial"

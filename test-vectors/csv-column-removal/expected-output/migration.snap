@@ -1,0 +1,49 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "modify",
+        "item_type": "tabular",
+        "path": "data.csv",
+        "summary": "Column removed: 'city'",
+        "tags": [
+          "binoc.column-removal",
+          "binoc.schema-change"
+        ],
+        "details": {
+          "cells_changed": 0,
+          "columns_added": [],
+          "columns_left": [
+            "name",
+            "age",
+            "city"
+          ],
+          "columns_removed": [
+            "city"
+          ],
+          "columns_right": [
+            "name",
+            "age"
+          ],
+          "hash_left": "a765f1321a212e939b76c668a316010b8404cf9c8219d987f0413dc9d12fcf58",
+          "hash_right": "5c23cb3199c0882f4743d97b03873b1fb881bf2592ff4ab318ba8213593162e3",
+          "rows_added": 0,
+          "rows_left": 2,
+          "rows_removed": 0,
+          "rows_right": 2
+        },
+        "comparator": "binoc.csv"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

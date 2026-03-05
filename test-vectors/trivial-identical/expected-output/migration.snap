@@ -1,0 +1,9 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": null
+}
