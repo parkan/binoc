@@ -1,0 +1,8 @@
+[vector]
+name = "single-file-modify-binary"
+description = "Binary file, different hash"
+tags = ["modify", "binary"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.content-changed"]

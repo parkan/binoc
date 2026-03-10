@@ -1,0 +1,29 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "move",
+        "item_type": "file",
+        "path": "new_name.bin",
+        "source_path": "old_name.bin",
+        "summary": "Moved from old_name.bin",
+        "tags": [
+          "binoc.move"
+        ]
+      }
+    ],
+    "comparator": "binoc.directory",
+    "transformed_by": [
+      "binoc.move_detector"
+    ]
+  }
+}

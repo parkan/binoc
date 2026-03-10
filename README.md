@@ -1,0 +1,190 @@
+# Binoc: The Missing Changelog for Datasets
+
+Binoc generates changelogs for datasets that don't have them. Given a series of snapshots of a dataset downloaded at different times, Binoc detects what changed, expresses those changes as a minimal structured diff, and produces human-readable summaries that distinguish substantive policy changes from ministerial housekeeping.
+
+The core workflow: an archivist, data scientist, or steward has five copies of a government dataset containing CSVs, downloaded over two years. Some are identical. Some have reordered columns. One has a new category relevant to their research. Binoc tells them exactly what changed, when, and whether (by their definition) it matters.
+
+## Example
+
+A dataset ships as a zip of CSVs alongside a SQLite database. Between quarterly releases, the CSV columns were reordered and the database grew:
+
+```bash
+binoc diff release-q3/ release-q4/
+```
+
+```
+# Changelog: release-q3/ → release-q4/
+
+## Ministerial Changes
+
+- **data.zip/agencies.csv**: Columns reordered (content unchanged)
+
+## Substantive Changes
+
+- **summary.sqlite**: Content changed (12.0 KB → 12.0 KB)
+```
+
+Binoc looked inside the zip and compared the CSV column-by-column — the reorder is flagged as ministerial housekeeping, not a real data change. But `.sqlite` is opaque to the standard library, so you only learn that the bytes differ.
+
+```bash
+pip install binoc-sqlite
+binoc diff release-q3/ release-q4/
+```
+
+```
+# Changelog: release-q3/ → release-q4/
+
+## Ministerial Changes
+
+- **data.zip/agencies.csv**: Columns reordered (content unchanged)
+
+## Substantive Changes
+
+- **summary.sqlite/allocations**: 3 rows added (84 → 87 rows)
+```
+
+Same command, richer output. The plugin parsed the database and found the actual change: three new rows in the `allocations` table. Plugins install via pip and work immediately — no configuration required.
+
+## Why It Exists
+
+Datasets published by governments, research institutions, and public bodies are living artifacts, and can change without warning or documentation (or without consistent documentation). The archival and data science communities need tooling to:
+
+- Detect whether a new snapshot of a dataset actually differs from the previous one.
+- Describe changes precisely — not just "the file changed," but "three columns were reordered (ministerial) and one column was split into two (substantive)."
+- Produce changelogs that are machine-readable for automated pipelines and human-readable for policy analysis.
+- Handle real-world messiness: datasets inside zip archives, nested containers, mixed formats, renamed files.
+
+Generic diff tools don't understand data formats, while version control systems track lines, not columns or schemas. Binoc bridges this gap.
+
+## Current Capabilities
+
+- Compare directory snapshots recursively
+- Diff zip archives, including nested zip contents
+- Compare CSV files with row, column, and cell awareness
+- Compare text files at line level
+- Compare binary files by content hash
+- Detect moves and copies from content hashes
+- Extract actual changed data from migration nodes (added rows, text diffs, etc.)
+- Render migrations as JSON or Markdown changelogs
+- Extend comparison and transformation pipelines from Rust stdlib plugins or Python-authored plugins
+
+## Documentation
+
+- [tutorial.md](docs/tutorial.md): end-to-end contributor walkthrough.
+- Start with [docs/design.md](docs/design.md) for the current architectural contract.
+- [test-vectors/](test-vectors/): fixtures demonstrating major capabilities.
+
+## Quick Start
+
+### Install via pip (recommended)
+
+```bash
+pip install binoc
+```
+
+Or run without installing:
+
+```bash
+uvx binoc diff path/to/snapshot-a path/to/snapshot-b
+```
+
+### Usage
+
+Diff two snapshots (prints a Markdown changelog to stdout by default):
+
+```bash
+binoc diff path/to/snapshot-a path/to/snapshot-b
+```
+
+Get raw migration JSON instead:
+
+```bash
+binoc diff path/to/snapshot-a path/to/snapshot-b --format json
+```
+
+Save outputs to files (format inferred from extension, or use `format:path` syntax):
+
+```bash
+binoc diff path/to/snapshot-a path/to/snapshot-b \
+  -o migration.json -o CHANGELOG.md -q
+```
+
+Combine saved migrations into a changelog:
+
+```bash
+binoc changelog migrations/*.json
+```
+
+Extract the actual changed data from a migration node (requires original snapshots):
+
+```bash
+binoc extract migration.json data.csv rows_added
+```
+
+### Plugins
+
+Third-party plugin packs extend binoc with domain-specific comparators and transformers. Install a plugin and its formats are available automatically:
+
+```bash
+pip install binoc-sqlite                # SQLite schema + row count diffing
+binoc diff snapshots/v1 snapshots/v2    # .sqlite/.db files now get semantic diffs
+```
+
+Or with `uvx`, no install needed:
+
+```bash
+uvx binoc --with binoc-sqlite diff snapshots/v1 snapshots/v2
+```
+
+See [docs/writing_plugins.md](docs/writing_plugins.md) for plugin authoring details and [docs/design.md](docs/design.md) for architecture.
+
+### Rust-only CLI
+
+A standalone Rust binary with standard library plugins (no Python, no plugin discovery) is also available:
+
+```bash
+cargo install binoc-cli
+binoc-cli diff path/to/snapshot-a path/to/snapshot-b
+```
+
+### Development
+
+Prerequisites: [Rust](https://rustup.rs/), [just](https://github.com/casey/just) (`brew install just`), and [uv](https://docs.astral.sh/uv/).
+
+```bash
+just build   # Rust workspace + Python bindings
+just test    # full suite: Rust + Python
+just docs    # regenerate tutorial after code changes
+```
+
+To test the full Python CLI with local plugin crates (no PyPI needed):
+
+```bash
+uv run --with ./binoc-python --with ./binoc-sqlite \
+  binoc diff path/to/snapshot-a path/to/snapshot-b
+```
+
+This builds both packages from source and wires up entry-point discovery automatically. The same pattern works for any local plugin crate that has a `pyproject.toml` with a `[project.entry-points."binoc.plugins"]` section. For a self-contained plugin example (install, run, test vectors), see [binoc-sqlite/README.md](binoc-sqlite/README.md).
+
+## Workspace Layout
+
+| Path | Role |
+|---|---|
+| `binoc-core/` | Controller, IR, config, traits, and output functions |
+| `binoc-stdlib/` | Standard comparators and transformers |
+| `binoc-cli/` | CLI library + standalone Rust binary |
+| `binoc-python/` | PyO3 bindings, Python plugin discovery, and `binoc` CLI entry point |
+| `binoc-sqlite/` | Demo plugin: SQLite schema and row count diffing |
+| `test-vectors/` | Test files demonstrating (and confirming) binoc output for major capabilities |
+| `docs/` | Documentation and design notes |
+
+
+## Future Work
+
+- Additional plugins such as Excel, Parquet, PDF, tar
+- `binoc plugin install` / `binoc plugin list` CLI subcommands
+- Richer Python notebook ergonomics
+- Additional output formatters (HTML, LLM-summarized)
+- Memory-bounded processing for very large trees
+- Similarity-based rename detection for modified-and-moved files
+- Fixed-point transformer iteration (tranformers currently run in a single pass, may miss optimizations)

@@ -1,0 +1,8 @@
+[vector]
+name = "directory-nested"
+description = "Subdirectories with mixed changes"
+tags = ["directory", "nested", "mixed"]
+
+[expected]
+root_kind = "modify"
+child_count = 2

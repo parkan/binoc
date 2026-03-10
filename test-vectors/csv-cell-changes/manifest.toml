@@ -1,0 +1,8 @@
+[vector]
+name = "csv-cell-changes"
+description = "Individual cell values changed"
+tags = ["csv", "cell-change"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.cell-change"]

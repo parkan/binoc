@@ -1,0 +1,8 @@
+[vector]
+name = "directory-file-copy"
+description = "New file with same content as an existing unchanged file detected as a copy"
+tags = ["copy", "directory", "content-hash"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.copy"]

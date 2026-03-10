@@ -1,0 +1,9 @@
+[vector]
+name = "trivial-identical"
+description = "Two identical directories → empty migration"
+tags = ["identical", "baseline"]
+
+[expected]
+# Structural assertions
+# root_kind = "modify"
+# child_count = 0  # no children (identical)

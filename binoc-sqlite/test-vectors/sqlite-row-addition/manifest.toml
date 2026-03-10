@@ -1,0 +1,9 @@
+[vector]
+name = "sqlite-row-addition"
+description = "Same schema, one more row in B"
+tags = ["sqlite", "row-addition"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc-sqlite.row-addition", "binoc.row-addition"]
+significance = "substantive"

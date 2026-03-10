@@ -1,0 +1,8 @@
+[vector]
+name = "single-file-modify-text"
+description = "Text file with line-level changes"
+tags = ["modify", "text", "lines"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.content-changed", "binoc.lines-added", "binoc.lines-removed"]

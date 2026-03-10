@@ -1,0 +1,7 @@
+[vector]
+name = "zip-nested"
+description = "Nested zip containing CSV"
+tags = ["zip", "nested", "csv"]
+
+[expected]
+root_kind = "modify"

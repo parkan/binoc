@@ -1,6 +1,4 @@
-[package]
-name = "binoc"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
+[workspace]
+members = ["binoc-core", "binoc-stdlib", "binoc-cli", "binoc-python", "binoc-sqlite"]
+default-members = ["binoc-core", "binoc-stdlib", "binoc-cli", "binoc-sqlite"]
+resolver = "2"

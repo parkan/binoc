@@ -1,0 +1,69 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "modify",
+        "item_type": "zip_archive",
+        "path": "archive.zip",
+        "children": [
+          {
+            "kind": "modify",
+            "item_type": "directory",
+            "path": "archive.zip",
+            "children": [
+              {
+                "kind": "modify",
+                "item_type": "text",
+                "path": "archive.zip/data.txt",
+                "summary": "1 line added, 1 removed",
+                "tags": [
+                  "binoc.content-changed",
+                  "binoc.lines-added",
+                  "binoc.lines-removed"
+                ],
+                "details": {
+                  "hash_left": "7d2be715558f22c45fe42095dbf7dc30052cc5d9536c5906c5a7b22d9b3bf7cb",
+                  "hash_right": "3a91d536da3fd59de72f6583c93d9cb7b0a605c0dc951e340d6a5edfd93fef89",
+                  "lines_added": 1,
+                  "lines_removed": 1,
+                  "lines_unchanged": 0
+                },
+                "comparator": "binoc.text"
+              },
+              {
+                "kind": "add",
+                "item_type": "text",
+                "path": "archive.zip/extra.txt",
+                "summary": "New file (1 line)",
+                "tags": [
+                  "binoc.content-changed"
+                ],
+                "details": {
+                  "hash_right": "bcdb9a6d7ac8185c68f76e92f60adebd637cba7bdac389f1dc029fb814546b6f",
+                  "lines": 1
+                },
+                "comparator": "binoc.text"
+              }
+            ],
+            "comparator": "binoc.directory"
+          }
+        ],
+        "details": {
+          "hash_left": "c5b903718934b42a5e5543353a7c3194a949207166e2e446c8b1775a39c63545",
+          "hash_right": "51dbd9da82bf80c5df39ba13fc51d65a262ad213abdcf4b6ee839cf48d00112a"
+        },
+        "comparator": "binoc.zip"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

@@ -1,0 +1,30 @@
+---
+source: binoc-stdlib/tests/test_vectors.rs
+expression: "&stable_migration"
+---
+{
+  "from_snapshot": "snapshot-a",
+  "to_snapshot": "snapshot-b",
+  "root": {
+    "kind": "modify",
+    "item_type": "directory",
+    "path": "",
+    "children": [
+      {
+        "kind": "remove",
+        "item_type": "text",
+        "path": "removed_file.txt",
+        "summary": "File removed (1 line)",
+        "tags": [
+          "binoc.content-changed"
+        ],
+        "details": {
+          "hash_left": "5c8e190f730bdf06ad211e9b475fab2064637d7906d82eb9a26333050e052973",
+          "lines": 1
+        },
+        "comparator": "binoc.text"
+      }
+    ],
+    "comparator": "binoc.directory"
+  }
+}

@@ -1,0 +1,8 @@
+[vector]
+name = "csv-column-removal"
+description = "Column removed"
+tags = ["csv", "column-removal", "schema"]
+
+[expected]
+root_kind = "modify"
+has_tags = ["binoc.column-removal", "binoc.schema-change"]
