@@ -181,7 +181,7 @@ This builds both packages from source and wires up entry-point discovery automat
 
 ## Future Work
 
-- Additional plugins such as Excel, Parquet, PDF, tar
+- Additional plugins such as Excel, Parquet, PDF
 - `binoc plugin install` / `binoc plugin list` CLI subcommands
 - Richer Python notebook ergonomics
 - Additional output formatters (HTML, LLM-summarized)
