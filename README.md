@@ -60,6 +60,7 @@ Generic diff tools don't understand data formats, while version control systems 
 
 - Compare directory snapshots recursively
 - Diff zip archives, including nested zip contents
+- Diff tar/tar.gz/tgz archives, including nested tar contents
 - Compare CSV files with row, column, and cell awareness
 - Compare text files at line level
 - Compare binary files by content hash
@@ -181,7 +182,7 @@ This builds both packages from source and wires up entry-point discovery automat
 
 ## Future Work
 
-- Additional plugins such as Excel, Parquet, PDF, tar
+- Additional plugins such as Excel, Parquet, PDF
 - `binoc plugin install` / `binoc plugin list` CLI subcommands
 - Richer Python notebook ergonomics
 - Additional output formatters (HTML, LLM-summarized)

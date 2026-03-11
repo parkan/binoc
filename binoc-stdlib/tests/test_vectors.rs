@@ -43,6 +43,8 @@ vector_test!(directory_nested);
 vector_test!(text_file_move);
 vector_test!(zip_simple);
 vector_test!(zip_nested);
+vector_test!(tar_simple);
+vector_test!(tar_nested);
 
 #[test]
 fn all_vectors_have_tests() {
@@ -64,6 +66,8 @@ fn all_vectors_have_tests() {
         "text-file-move",
         "zip-simple",
         "zip-nested",
+        "tar-simple",
+        "tar-nested",
     ];
 
     let discovered: Vec<String> = discover_vectors(&vectors_dir())

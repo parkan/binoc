@@ -71,6 +71,7 @@ impl DatasetConfig {
         Self {
             comparators: vec![
                 "binoc.zip".into(),
+                "binoc.tar".into(),
                 "binoc.directory".into(),
                 "binoc.csv".into(),
                 "binoc.text".into(),
@@ -320,6 +321,7 @@ mod tests {
             config.comparators,
             vec![
                 "binoc.zip",
+                "binoc.tar",
                 "binoc.directory",
                 "binoc.csv",
                 "binoc.text",

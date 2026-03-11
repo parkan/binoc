@@ -70,6 +70,13 @@ For zip-based vectors, use `.zip.d` directories. The test harness builds these i
 - `archive.zip.d/data.txt` → `archive.zip` containing `data.txt`
 - `outer.zip.d/inner.zip.d/data.csv` → nested zips
 
+## Tar Vectors
+
+For tar-based vectors, use `.tar.d`, `.tar.gz.d`, or `.tgz.d` directories. The test harness builds these into tar archives before comparison:
+
+- `archive.tar.gz.d/data.txt` → `archive.tar.gz` containing `data.txt`
+- `outer.tar.gz.d/inner.tar.gz.d/data.csv` → nested tar.gz archives
+
 ## SQLite Vectors (plugin)
 
 In plugin test vectors (e.g. `binoc-sqlite/test-vectors/`), use `.sqlite.d` or `.db.d` directories. Building the `.sqlite`/`.db` file from those sources is the **plugin’s** responsibility (via the harness’s optional `prepare` callback), not the shared harness; see `binoc-sqlite/tests/test_vectors.rs`. Example layout: `data.sqlite.d/01_schema.sql` and `data.sqlite.d/02_data.sql` → `data.sqlite`.
@@ -106,3 +113,5 @@ In plugin test vectors (e.g. `binoc-sqlite/test-vectors/`), use `.sqlite.d` or `
 | directory-nested | Subdirectories with mixed changes |
 | zip-simple | Zipped files with changes inside |
 | zip-nested | Nested zip containing CSV |
+| tar-simple | Tar.gz archive with changes inside |
+| tar-nested | Nested tar.gz containing CSV |
