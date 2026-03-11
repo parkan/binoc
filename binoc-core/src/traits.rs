@@ -17,6 +17,8 @@ pub enum BinocError {
     Csv(String),
     #[error("zip error: {0}")]
     Zip(String),
+    #[error("tar error: {0}")]
+    Tar(String),
     #[error("extract error: {0}")]
     Extract(String),
     #[error("{0}")]

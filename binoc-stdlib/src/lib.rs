@@ -10,6 +10,7 @@ use outputters::markdown::MarkdownOutputter;
 /// Register all standard library plugins into a registry.
 pub fn register_stdlib(registry: &mut PluginRegistry) {
     registry.register_comparator("binoc.zip", Arc::new(comparators::zip_compare::ZipComparator));
+    registry.register_comparator("binoc.tar", Arc::new(comparators::tar_compare::TarComparator));
     registry.register_comparator("binoc.directory", Arc::new(comparators::directory::DirectoryComparator));
     registry.register_comparator("binoc.csv", Arc::new(comparators::csv_compare::CsvComparator));
     registry.register_comparator("binoc.text", Arc::new(comparators::text::TextComparator));

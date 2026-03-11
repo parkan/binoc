@@ -3,8 +3,9 @@
 //! copy/build/snapshot logic, or assertions. Vectors live in a `test-vectors/`
 //! directory; a root `manifest.toml` there provides default `[config]`/`[expected]`;
 //! each vector’s manifest overrides. The harness copies snapshots to a temp dir
-//! and builds `.zip` files from `.zip.d` there; plugins that need other artifacts
-//! (e.g. SQLite from `.sqlite.d`) pass an optional `prepare` callback.
+//! and builds `.zip` files from `.zip.d` and `.tar`/`.tar.gz` files from
+//! `.tar.d`/`.tar.gz.d` there; plugins that need other artifacts (e.g. SQLite
+//! from `.sqlite.d`) pass an optional `prepare` callback.
 
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -111,6 +112,10 @@ pub fn run_vector(
     build_zips_in_dir(&snap_b);
     remove_zipd_dirs(&snap_a);
     remove_zipd_dirs(&snap_b);
+    build_tars_in_dir(&snap_a);
+    build_tars_in_dir(&snap_b);
+    remove_tard_dirs(&snap_a);
+    remove_tard_dirs(&snap_b);
     if let Some(f) = prepare {
         f(&snap_a, &snap_b);
     }
@@ -247,6 +252,95 @@ fn remove_zipd_dirs(dir: &Path) {
             } else {
                 remove_zipd_dirs(&entry);
             }
+        }
+    }
+}
+
+fn build_tars_in_dir(dir: &Path) {
+    if !dir.exists() {
+        return;
+    }
+    let entries: Vec<PathBuf> = std::fs::read_dir(dir)
+        .into_iter()
+        .flat_map(|rd| rd.into_iter())
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .collect();
+    for entry in entries {
+        if entry.is_dir() {
+            let name = entry.file_name().unwrap().to_string_lossy().to_string();
+            if name.ends_with(".tar.d") || name.ends_with(".tar.gz.d") || name.ends_with(".tgz.d") {
+                build_tars_in_dir(&entry);
+                let tar_name = name.trim_end_matches(".d");
+                let tar_path = dir.join(tar_name);
+                create_tar_from_dir(&entry, &tar_path);
+            } else {
+                build_tars_in_dir(&entry);
+            }
+        }
+    }
+}
+
+fn remove_tard_dirs(dir: &Path) {
+    if !dir.exists() {
+        return;
+    }
+    let entries: Vec<PathBuf> = std::fs::read_dir(dir)
+        .into_iter()
+        .flat_map(|rd| rd.into_iter())
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .collect();
+    for entry in entries {
+        if entry.is_dir() {
+            let name = entry.file_name().unwrap().to_string_lossy().to_string();
+            if name.ends_with(".tar.d") || name.ends_with(".tar.gz.d") || name.ends_with(".tgz.d") {
+                std::fs::remove_dir_all(&entry).ok();
+            } else {
+                remove_tard_dirs(&entry);
+            }
+        }
+    }
+}
+
+fn create_tar_from_dir(source_dir: &Path, tar_path: &Path) {
+    let tar_name = tar_path.to_string_lossy();
+    let is_gz = tar_name.ends_with(".tar.gz") || tar_name.ends_with(".tgz");
+
+    let file = std::fs::File::create(tar_path)
+        .unwrap_or_else(|e| panic!("Failed to create {}: {e}", tar_path.display()));
+
+    if is_gz {
+        let encoder = flate2::GzBuilder::new()
+            .mtime(0)
+            .write(file, flate2::Compression::fast());
+        let mut builder = tar::Builder::new(encoder);
+        builder.mode(tar::HeaderMode::Deterministic);
+        add_dir_to_tar(&mut builder, source_dir, source_dir);
+        let encoder = builder.into_inner().unwrap();
+        encoder.finish().unwrap();
+    } else {
+        let mut builder = tar::Builder::new(file);
+        builder.mode(tar::HeaderMode::Deterministic);
+        add_dir_to_tar(&mut builder, source_dir, source_dir);
+        builder.into_inner().unwrap();
+    }
+}
+
+fn add_dir_to_tar<W: Write>(builder: &mut tar::Builder<W>, base: &Path, dir: &Path) {
+    let mut entries: Vec<_> = std::fs::read_dir(dir).unwrap().filter_map(|e| e.ok()).collect();
+    entries.sort_by_key(|e| e.file_name());
+    for entry in entries {
+        let path = entry.path();
+        let rel = path.strip_prefix(base).unwrap();
+        let name = rel.to_string_lossy();
+        if path.is_dir() && (name.ends_with(".tar.d") || name.ends_with(".tar.gz.d") || name.ends_with(".tgz.d")) {
+            continue;
+        }
+        if path.is_dir() {
+            add_dir_to_tar(builder, base, &path);
+        } else {
+            builder.append_path_with_name(&path, &*name).unwrap();
         }
     }
 }
