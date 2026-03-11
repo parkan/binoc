@@ -19,13 +19,13 @@ fmt:
 # Run formatting and lint checks (mirrors CI).
 check:
     cargo fmt --check
-    cargo clippy --workspace --all-targets -- -D warnings
+    cargo clippy --workspace --all-targets --all-features -- -D warnings
     uvx ruff check binoc-python/ binoc-sqlite/python/
     uvx ruff format --check binoc-python/ binoc-sqlite/python/
 
 # Run all tests: Rust crates + Python binding tests.
 test:
-    cargo test
+    cargo test --all-features
     cd binoc-python && uv run pytest
 
 # Regenerate docs/tutorial.md by re-running all embedded code blocks.
