@@ -33,7 +33,7 @@ impl Comparator for TarComparator {
 
     fn handles_extensions(&self) -> &[&str] { &[".tar", ".tar.gz", ".tgz"] }
 
-    fn handles_media_types(&self) -> &[&str] { &["application/x-tar", "application/gzip"] }
+    fn handles_media_types(&self) -> &[&str] { &["application/x-tar"] }
 
     fn reopen(
         &self,
