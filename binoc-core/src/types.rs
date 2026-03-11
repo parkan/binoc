@@ -198,7 +198,7 @@ pub enum TransformResult {
     /// Node unchanged — zero cost.
     Unchanged,
     /// Replace this node with a new one.
-    Replace(DiffNode),
+    Replace(Box<DiffNode>),
     /// Replace this node with multiple sibling nodes.
     ReplaceMany(Vec<DiffNode>),
     /// Remove this node entirely.

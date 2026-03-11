@@ -43,7 +43,7 @@ impl Transformer for ColumnReorderDetector {
             node.summary = Some("Columns reordered (content unchanged)".into());
             node.tags.clear();
             node.tags.insert("binoc.column-reorder".into());
-            TransformResult::Replace(node)
+            TransformResult::Replace(Box::new(node))
         } else {
             TransformResult::Unchanged
         }

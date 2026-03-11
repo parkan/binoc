@@ -362,7 +362,7 @@ impl Controller {
                         TransformResult::Unchanged => vec![node],
                         TransformResult::Replace(mut new_node) => {
                             new_node.transformed_by.push(trans_name);
-                            vec![new_node]
+                            vec![*new_node]
                         }
                         TransformResult::ReplaceMany(nodes) => nodes
                             .into_iter()
@@ -383,7 +383,7 @@ impl Controller {
                         TransformResult::Unchanged => vec![node],
                         TransformResult::Replace(mut new_node) => {
                             new_node.transformed_by.push(trans_name);
-                            vec![new_node]
+                            vec![*new_node]
                         }
                         TransformResult::ReplaceMany(nodes) => nodes
                             .into_iter()
@@ -614,10 +614,10 @@ mod tests {
             self.can_handle
         }
         fn transform(&self, node: DiffNode, _ctx: &CompareContext) -> TransformResult {
-            TransformResult::Replace(
+            TransformResult::Replace(Box::new(
                 node.with_tag("transformed")
                     .with_detail("by", serde_json::json!("replace-transformer")),
-            )
+            ))
         }
     }
 

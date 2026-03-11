@@ -90,7 +90,7 @@ impl Transformer for CopyDetector {
 
         new_children.sort_by(|a, b| a.path.cmp(&b.path));
         node.children = new_children;
-        TransformResult::Replace(node)
+        TransformResult::Replace(Box::new(node))
     }
 }
 

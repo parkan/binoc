@@ -34,15 +34,12 @@ fn test_identical_files() {
 
     // Root directory expand produces a node, but all children are identical
     // so the directory node should have no children with actual diffs
-    match &migration.root {
-        Some(root) => {
-            assert!(
-                root.children.is_empty(),
-                "identical files should produce no diff children, got: {:?}",
-                root.children
-            );
-        }
-        None => {} // Also acceptable
+    if let Some(root) = &migration.root {
+        assert!(
+            root.children.is_empty(),
+            "identical files should produce no diff children, got: {:?}",
+            root.children
+        );
     }
 }
 

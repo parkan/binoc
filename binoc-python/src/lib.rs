@@ -892,7 +892,7 @@ fn convert_py_transform_result(py: Python<'_>, obj: &Py<PyAny>) -> Option<Transf
     if bound.is_instance_of::<PyUnchanged>() {
         Some(TransformResult::Unchanged)
     } else if let Ok(replace) = bound.extract::<PyReplace>() {
-        Some(TransformResult::Replace(replace.node.inner))
+        Some(TransformResult::Replace(Box::new(replace.node.inner)))
     } else if let Ok(replace_many) = bound.extract::<PyReplaceMany>() {
         let nodes: Vec<ir::DiffNode> = replace_many.nodes.into_iter().map(|n| n.inner).collect();
         Some(TransformResult::ReplaceMany(nodes))

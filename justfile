@@ -24,8 +24,11 @@ check:
     uvx ruff format --check binoc-python/ binoc-sqlite/python/
 
 # Run all tests: Rust crates + Python binding tests.
+# Note: no --all-features here. The test-vectors feature is already activated via
+# dev-dependencies, and --all-features would enable binoc-sqlite's "python" feature,
+# which builds a PyO3 cdylib that can only link via maturin (not bare cargo).
 test:
-    cargo test --all-features
+    cargo test
     cd binoc-python && uv run pytest
 
 # Regenerate docs/tutorial.md by re-running all embedded code blocks.
