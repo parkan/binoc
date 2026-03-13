@@ -1,6 +1,17 @@
+use std::any::Any;
 use std::path::PathBuf;
 
 use crate::ir::DiffNode;
+
+// ── Plugin-extensible reopened data ─────────────────────────────────
+
+/// Trait for plugin-defined data types passed through the Custom variant
+/// of ReopenedData. Producer and consumer agree on the concrete type via
+/// downcast.
+pub trait CustomReopenedData: Any + Send + Sync {
+    fn as_any(&self) -> &dyn Any;
+    fn clone_boxed(&self) -> Box<dyn CustomReopenedData>;
+}
 
 // ── Format-neutral data types for reopen/extract ────────────────────
 
@@ -45,9 +56,10 @@ pub struct TabularDataPair {
     pub right: Option<TabularData>,
 }
 
-/// Data reopened from source files, format-neutral.
-/// Produced by comparator `reopen_data`, consumed by transformer `extract`.
-#[derive(Debug, Clone)]
+/// Data reopened from source files for the extract chain.
+/// Stdlib types use the built-in variants; plugins use Custom with a
+/// type that implements CustomReopenedData, accessed via downcast.
+#[non_exhaustive]
 pub enum ReopenedData {
     Tabular(TabularDataPair),
     Text {
@@ -58,6 +70,24 @@ pub enum ReopenedData {
         left: Option<Vec<u8>>,
         right: Option<Vec<u8>>,
     },
+    Custom(Box<dyn CustomReopenedData>),
+}
+
+impl Clone for ReopenedData {
+    fn clone(&self) -> Self {
+        match self {
+            Self::Tabular(p) => Self::Tabular(p.clone()),
+            Self::Text { left, right } => Self::Text {
+                left: left.clone(),
+                right: right.clone(),
+            },
+            Self::Binary { left, right } => Self::Binary {
+                left: left.clone(),
+                right: right.clone(),
+            },
+            Self::Custom(c) => Self::Custom(c.clone_boxed()),
+        }
+    }
 }
 
 /// Represents one side of a comparison — a file, directory, or virtual entry.
