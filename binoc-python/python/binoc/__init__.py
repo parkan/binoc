@@ -37,6 +37,7 @@ from binoc._binoc import (
     to_json,
     to_markdown,
 )
+from binoc._discovery import discover_plugins
 
 
 class Comparator:
@@ -133,6 +134,7 @@ __all__ = [
     "diff",
     "to_json",
     "to_markdown",
+    "discover_plugins",
     "DiffNode",
     "Migration",
     "Config",
