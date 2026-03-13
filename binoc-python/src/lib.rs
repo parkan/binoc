@@ -1036,8 +1036,19 @@ impl PyConfig {
 // Top-level functions
 // ═══════════════════════════════════════════════════════════════════════════
 
-fn build_controller(py: Python<'_>, config: &PyConfig) -> PyResult<Controller> {
-    let registry = binoc_stdlib::default_registry();
+fn build_controller(
+    py: Python<'_>,
+    config: &PyConfig,
+    registry: Option<&PyPluginRegistry>,
+) -> PyResult<Controller> {
+    let default_registry;
+    let registry = match registry {
+        Some(r) => &r.inner,
+        None => {
+            default_registry = binoc_stdlib::default_registry();
+            &default_registry
+        }
+    };
     let resolved = registry
         .resolve(&config.dataset_config)
         .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
@@ -1058,12 +1069,13 @@ fn build_controller(py: Python<'_>, config: &PyConfig) -> PyResult<Controller> {
 }
 
 #[pyfunction]
-#[pyo3(signature = (snapshot_a, snapshot_b, *, config=None))]
+#[pyo3(signature = (snapshot_a, snapshot_b, *, config=None, registry=None))]
 fn diff(
     py: Python<'_>,
     snapshot_a: &str,
     snapshot_b: &str,
     config: Option<&PyConfig>,
+    registry: Option<&PyPluginRegistry>,
 ) -> PyResult<PyMigration> {
     let default_config;
     let config = match config {
@@ -1078,7 +1090,7 @@ fn diff(
         }
     };
 
-    let controller = build_controller(py, config)?;
+    let controller = build_controller(py, config, registry)?;
 
     let migration = py
         .detach(|| controller.diff(snapshot_a, snapshot_b))
@@ -1093,7 +1105,7 @@ fn to_json(migration: &PyMigration) -> PyResult<String> {
 }
 
 #[pyfunction]
-#[pyo3(signature = (migration, node_path, aspect="content", *, snapshot_a=None, snapshot_b=None, config=None))]
+#[pyo3(signature = (migration, node_path, aspect="content", *, snapshot_a=None, snapshot_b=None, config=None, registry=None))]
 fn extract(
     py: Python<'_>,
     migration: &PyMigration,
@@ -1102,6 +1114,7 @@ fn extract(
     snapshot_a: Option<&str>,
     snapshot_b: Option<&str>,
     config: Option<&PyConfig>,
+    registry: Option<&PyPluginRegistry>,
 ) -> PyResult<String> {
     let default_config;
     let config = match config {
@@ -1116,7 +1129,7 @@ fn extract(
         }
     };
 
-    let controller = build_controller(py, config)?;
+    let controller = build_controller(py, config, registry)?;
 
     let snap_a = snapshot_a
         .map(|s| s.to_string())
@@ -1192,6 +1205,13 @@ impl PyPluginRegistry {
         let bridge = create_transformer_bridge(py, obj.bind(py))?;
         self.inner.register_transformer(name, Arc::new(bridge));
         Ok(())
+    }
+
+    /// Return a raw pointer to the inner PluginRegistry for native plugin
+    /// registration. The returned value is only valid for the lifetime of
+    /// this object -- pass it immediately to a native extension's registrar.
+    fn _inner_ptr(&mut self) -> usize {
+        &mut self.inner as *mut PluginRegistry as usize
     }
 
     /// List all registered comparator names.
